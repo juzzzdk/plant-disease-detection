@@ -11,7 +11,16 @@ st.markdown("---")
 
 @st.cache_resource
 def load_disease_model():
-    model = tf.keras.models.load_model("keras_model.h5", compile=False)
+   import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
+import tf_keras as legacy_keras
+
+@st.cache_resource
+def load_disease_model():
+    model = legacy_keras.models.load_model("keras_model.h5", compile=False)
+    with open("labels.txt", "r") as f:
+        class_names = [line.strip() for line in f.readlines()]
+    return model, class_names
     with open("labels.txt", "r") as f:
         class_names = [line.strip() for line in f.readlines()]
     return model, class_names
