@@ -1,7 +1,10 @@
+import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
+
 import streamlit as st
 from PIL import Image, ImageOps
 import numpy as np
-import tensorflow as tf
+import tf_keras as keras
 
 st.set_page_config(page_title="AI AgroCare - Multi-Crop Disease Detector", page_icon="🌿")
 
@@ -11,23 +14,14 @@ st.markdown("---")
 
 @st.cache_resource
 def load_disease_model():
-   import os
-os.environ["TF_USE_LEGACY_KERAS"] = "1"
-import tf_keras as legacy_keras
-
-@st.cache_resource
-def load_disease_model():
-    model = legacy_keras.models.load_model("keras_model.h5", compile=False)
-    with open("labels.txt", "r") as f:
-        class_names = [line.strip() for line in f.readlines()]
-    return model, class_names
+    model = keras.models.load_model("keras_model.h5", compile=False)
     with open("labels.txt", "r") as f:
         class_names = [line.strip() for line in f.readlines()]
     return model, class_names
 
 model, class_names = load_disease_model()
 
-# Remedies dictionary mapped directly to your 8 Teachable Machine classes
+# Remedies dictionary matching your 8 classes
 remedies = {
     "Tomato Healthy": {
         "status": "Healthy Tomato Leaf",
@@ -89,7 +83,6 @@ if uploaded_file is not None:
         index = np.argmax(prediction)
         
         raw_label = class_names[index]
-        # Clean label (e.g., converts '0 Tomato Healthy' -> 'Tomato Healthy')
         clean_label = " ".join(raw_label.split()[1:]) if raw_label[0].isdigit() else raw_label
         confidence = float(prediction[0][index]) * 100
 
