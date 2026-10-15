@@ -1,10 +1,13 @@
 import os
-os.environ["TF_USE_LEGACY_KERAS"] = "1"
+
+# Disable GPU/heavy logs and enable legacy Keras mode
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 import streamlit as st
 from PIL import Image, ImageOps
 import numpy as np
-import tf_keras as keras
+import tensorflow as tf
 
 st.set_page_config(page_title="AI AgroCare - Multi-Crop Disease Detector", page_icon="🌿")
 
@@ -14,14 +17,14 @@ st.markdown("---")
 
 @st.cache_resource
 def load_disease_model():
-    model = keras.models.load_model("keras_model.h5", compile=False)
+    # Load Teachable Machine h5 model without compilation overhead
+    model = tf.keras.models.load_model("keras_model.h5", compile=False)
     with open("labels.txt", "r") as f:
         class_names = [line.strip() for line in f.readlines()]
     return model, class_names
 
 model, class_names = load_disease_model()
 
-# Remedies dictionary matching your 8 classes
 remedies = {
     "Tomato Healthy": {
         "status": "Healthy Tomato Leaf",
