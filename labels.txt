@@ -1,0 +1,8 @@
+0 Tomato  healthy
+1 Tomato early blight
+2 Tomato bacterial spot
+3 Potato healthy
+4 Potato Early Blight
+5 Potato Late Blight
+6 Bellpepper Healthy
+7 Bellpepper Bacterial spot
